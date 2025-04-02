@@ -1,5 +1,5 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
 
 using System.IO;
@@ -23,10 +23,11 @@ public class MarkdownPipelineBuilder
     /// </summary>
     public MarkdownPipelineBuilder()
     {
+        //Markdown是分块指令和行指令
         // Add all default parsers
         BlockParsers =
         [
-            new ThematicBreakParser(),
+            new ThematicBreakParser(), //主题分割线的parser对应的是html中的<hr/>标签
             new HeadingBlockParser(),
             new QuoteBlockParser(),
             new ListBlockParser(),

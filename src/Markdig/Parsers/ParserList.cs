@@ -1,5 +1,5 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
 
 using System.Runtime.CompilerServices;
@@ -16,6 +16,7 @@ namespace Markdig.Parsers;
 /// <seealso cref="OrderedList{T}" />
 public abstract class ParserList<T, TState> : OrderedList<T> where T : notnull, ParserBase<TState>
 {
+    //ParserList是OrderedList的子类
     private readonly CharacterMap<T[]> charMap;
     private readonly T[]? globalParsers;
 
@@ -23,7 +24,7 @@ public abstract class ParserList<T, TState> : OrderedList<T> where T : notnull, 
     {
         var charCounter = new Dictionary<char, int>();
         int globalCounter = 0;
-
+        //遍历所有的parser，进行初始化，并标记每个parser所在的位置
         for (int i = 0; i < Count; i++)
         {
             var parser = this[i];
@@ -31,11 +32,13 @@ public abstract class ParserList<T, TState> : OrderedList<T> where T : notnull, 
             {
                 ThrowHelper.InvalidOperationException("Unexpected null parser found");
             }
-
+            //parser进行初始化，让parser记住自己的位置
             parser.Initialize();
             parser.Index = i;
+            // C# 的属性模式
+            //https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/patterns#property-pattern
             if (parser.OpeningCharacters is { Length: > 0 })
-            {
+            {   //记录每个指令开头字符所对应的Parsers数量
                 foreach (var openingChar in parser.OpeningCharacters)
                 {
                     if (!charCounter.ContainsKey(openingChar))
@@ -47,15 +50,15 @@ public abstract class ParserList<T, TState> : OrderedList<T> where T : notnull, 
             }
             else
             {
-                globalCounter++;
+                globalCounter++; //如果没有指令开头字符，就认为是全局Parser
             }
         }
-
+        // 存储全局Parser
         if (globalCounter > 0)
         {
             globalParsers = new T[globalCounter];
         }
-
+        //再次便利Parsers,记录指令开头字符
         var tempCharMap = new Dictionary<char, T[]>();
         foreach (var parser in this)
         {
@@ -68,7 +71,7 @@ public abstract class ParserList<T, TState> : OrderedList<T> where T : notnull, 
                         parsers = new T[charCounter[openingChar]];
                         tempCharMap[openingChar] = parsers;
                     }
-
+                    //将Parser放到对应指令开头字符所在的Parser集合上
                     var index = parsers.Length - charCounter[openingChar];
                     parsers[index] = parser;
                     charCounter[openingChar]--;
@@ -80,7 +83,7 @@ public abstract class ParserList<T, TState> : OrderedList<T> where T : notnull, 
                 globalCounter--;
             }
         }
-
+        //构建出开头指令字符所对应Parser的映射表
         charMap = new CharacterMap<T[]>(tempCharMap);
     }
 
