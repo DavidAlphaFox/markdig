@@ -27,24 +27,24 @@ public class MarkdownPipelineBuilder
         // Add all default parsers
         BlockParsers =
         [
-            new ThematicBreakParser(), //主题分割线的parser对应的是html中的<hr/>标签
-            new HeadingBlockParser(),
-            new QuoteBlockParser(),
-            new ListBlockParser(),
+            new ThematicBreakParser(), //主题分割线的parser对应的是html中的<hr>标签
+            new HeadingBlockParser(), //标题的Parser，对应的是html中的<h1> - <h5>标签
+            new QuoteBlockParser(), //引用的Parser，对应的是html中的<blockquote>
+            new ListBlockParser(), //列表的Parser，对应的是html中的<ul><ol>和<li>
 
-            new HtmlBlockParser(),
-            new FencedCodeBlockParser(),
-            new IndentedCodeBlockParser(),
+            new HtmlBlockParser(), //原生html的Parser
+            new FencedCodeBlockParser(),//代码的Parser，对应的是html中的<code>标签
+            new IndentedCodeBlockParser(),//代码内容Parser
             new ParagraphBlockParser(),
         ];
 
         InlineParsers =
         [
             new HtmlEntityParser(),
-            new LinkInlineParser(),
+            new LinkInlineParser(),//连接的Parser，对应的是html的<a>标签
             new EscapeInlineParser(),
-            new EmphasisInlineParser(),
-            new CodeInlineParser(),
+            new EmphasisInlineParser(),//强调标签的Parser，对应的是<strong>标签
+            new CodeInlineParser(),//行内代码的Parser，对应的是<code>标签
             new AutolinkInlineParser(),
             new LineBreakInlineParser(),
         ];
