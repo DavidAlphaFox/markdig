@@ -1,5 +1,5 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
 
 using System.Buffers;
@@ -44,11 +44,12 @@ public sealed class CharacterMap<T> where T : class
         {
             char openingChar = state.Key;
             if (openingChar < 128)
-            {
+            {   //对ASCII编码开头指令字符表进行赋值
                 _asciiMap[openingChar] ??= state.Value;
             }
             else
             {
+                //对非ASCII编码的开头指令字符表进行赋值
                 _nonAsciiMap ??= new Dictionary<uint, T>();
 
                 if (!_nonAsciiMap.ContainsKey(openingChar))
@@ -103,7 +104,7 @@ public sealed class CharacterMap<T> where T : class
         Debug.Assert(text is not null);
 
         ReadOnlySpan<char> span = text.AsSpan(start, end - start + 1);
-
+        //使用Span对字符进行搜索
         int index = span.IndexOfAny(_values);
 
         if (index >= 0)
