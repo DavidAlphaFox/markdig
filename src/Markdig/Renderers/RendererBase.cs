@@ -1,5 +1,5 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
 
 using System.Runtime.CompilerServices;
@@ -55,20 +55,20 @@ public abstract class RendererBase : IMarkdownRenderer
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IMarkdownObjectRenderer? GetRendererInstance(MarkdownObject obj)
     {
-        Type objectType = obj.GetType();
+        Type objectType = obj.GetType(); //得到需要渲染对象的类型
         IMarkdownObjectRenderer? renderer = null;
 
         foreach (var potentialRenderer in ObjectRenderers)
         {
-            if (potentialRenderer.Accept(this, objectType))
+            if (potentialRenderer.Accept(this, objectType)) //如果某个render可以处理该类型
             {
                 renderer = potentialRenderer;
                 break;
             }
         }
 
-        IntPtr key = GetKeyForType(obj);
-
+        IntPtr key = GetKeyForType(obj); //得到渲染队形的类型指针
+        //定义一个局部变量，直接引用其他变量（共享内存地址）,_renderersPerType是一个二元数组
         ref RendererEntry[] entries = ref _renderersPerType[SubTableIndex(key)];
         Array.Resize(ref entries, entries.Length + 1);
         entries[entries.Length - 1] = new RendererEntry(key, renderer);
@@ -167,13 +167,13 @@ public abstract class RendererBase : IMarkdownRenderer
         if (obj is null)
         {
             return;
-        }
+        } //空对象直接结束
 
         // Calls before writing an object
         ObjectWriteBefore?.Invoke(this, obj);
 
         IMarkdownObjectRenderer? renderer = null;
-        IntPtr key = GetKeyForType(obj);
+        IntPtr key = GetKeyForType(obj); //获取类型的句柄
 
 #if NETFRAMEWORK || NETSTANDARD
         RendererEntry[] renderers = _renderersPerType[SubTableIndex(key)];
@@ -185,7 +185,7 @@ public abstract class RendererBase : IMarkdownRenderer
         {
             if (key == entry.Key)
             {
-                renderer = entry.Renderer;
+                renderer = entry.Renderer; //找到对应的Render
                 goto Render;
             }
         }
@@ -195,13 +195,13 @@ public abstract class RendererBase : IMarkdownRenderer
     Render:
         if (renderer is not null)
         {
-            renderer.Write(this, obj);
+            renderer.Write(this, obj); //使用Render进行写入
         }
-        else if (obj.IsContainerInline)
+        else if (obj.IsContainerInline) //是inline对象
         {
             WriteChildren(Unsafe.As<ContainerInline>(obj));
         }
-        else if (obj.IsContainerBlock)
+        else if (obj.IsContainerBlock) //是block对象
         {
             WriteChildren(Unsafe.As<ContainerBlock>(obj));
         }
